@@ -11,6 +11,7 @@ import theme from '../styles/theme';
 import Header from '../components/Header';
 import { notificationService, Notification } from '../services/notifications';
 
+// define o tipo das propriedades de navegação para a tela
 type NotificationsScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Notifications'>;
 };
@@ -21,195 +22,205 @@ const NotificationsScreen: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // função para carregar as notificações do usuário
   const loadNotifications = async () => {
-    if (!user?.id) return;
-    
-    try {
-      const userNotifications = await notificationService.getNotifications(user.id);
-      setNotifications(userNotifications);
-    } catch (error) {
-      console.error('Erro ao carregar notificações:', error);
-    } finally {
-      setLoading(false);
-    }
+   if (!user?.id) return;
+   
+   try {
+     const userNotifications = await notificationService.getNotifications(user.id);
+     // inverte a ordem para mostrar as mais recentes primeiro
+     setNotifications(userNotifications.reverse());
+   } catch (error) {
+     console.error('Erro ao carregar notificações:', error);
+   } finally {
+     setLoading(false);
+   }
   };
 
+  // recarrega as notificações sempre que a tela ganha foco
   useFocusEffect(
-    React.useCallback(() => {
-      loadNotifications();
-    }, [user?.id])
+   React.useCallback(() => {
+     loadNotifications();
+   }, [user?.id])
   );
 
+  // lida com a ação de marcar uma notificação como lida
   const handleMarkAsRead = async (notificationId: string) => {
-    try {
-      await notificationService.markAsRead(notificationId);
-      loadNotifications();
-    } catch (error) {
-      console.error('Erro ao marcar como lida:', error);
-    }
+   try {
+     await notificationService.markAsRead(notificationId);
+     loadNotifications(); // recarrega para atualizar a UI
+   } catch (error) {
+     console.error('Erro ao marcar como lida:', error);
+   }
   };
 
+  // lida com a ação de marcar todas as notificações como lidas
   const handleMarkAllAsRead = async () => {
-    if (!user?.id) return;
-    
-    try {
-      await notificationService.markAllAsRead(user.id);
-      loadNotifications();
-    } catch (error) {
-      console.error('Erro ao marcar todas como lidas:', error);
-    }
+   if (!user?.id) return;
+   
+   try {
+     await notificationService.markAllAsRead(user.id);
+     loadNotifications(); // recarrega para atualizar a UI
+   } catch (error) {
+     console.error('Erro ao marcar todas como lidas:', error);
+   }
   };
 
+  // lida com a ação de exclusão de uma notificação com confirmação
   const handleDeleteNotification = async (notificationId: string) => {
-    Alert.alert(
-      'Excluir Notificação',
-      'Tem certeza que deseja excluir esta notificação?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await notificationService.deleteNotification(notificationId);
-              loadNotifications();
-            } catch (error) {
-              console.error('Erro ao excluir notificação:', error);
-            }
-          },
+   Alert.alert(
+     'Excluir Notificação',
+     'Tem certeza que deseja excluir esta notificação?',
+     [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+         try {
+           await notificationService.deleteNotification(notificationId);
+           loadNotifications(); // recarrega para atualizar a UI
+         } catch (error) {
+           console.error('Erro ao excluir notificação:', error);
+         }
         },
-      ]
-    );
+      },
+     ]
+   );
   };
 
+  // helper para obter o ícone da notificação baseado no tipo
   const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'appointment_confirmed':
-        return '✅';
-      case 'appointment_cancelled':
-        return '❌';
-      case 'appointment_reminder':
-        return '⏰';
-      default:
-        return '📩';
-    }
+   switch (type) {
+     case 'appointment_confirmed':
+      return '✅';
+     case 'appointment_cancelled':
+      return '❌';
+     case 'appointment_reminder':
+      return '⏰';
+     default:
+      return '📩';
+   }
   };
 
+  // helper para formatar a data da notificação
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+   const date = new Date(dateString);
+   return date.toLocaleDateString('pt-BR', {
+     day: '2-digit',
+     month: '2-digit',
+     year: 'numeric',
+     hour: '2-digit',
+     minute: '2-digit',
+   });
   };
 
+  // conta as notificações não lidas
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <Container>
-      <Header />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <TitleContainer>
-          <Title>Notificações</Title>
-          {unreadCount > 0 && (
-            <Badge
-              value={unreadCount}
-              status="error"
-              containerStyle={styles.badge}
-            />
-          )}
-        </TitleContainer>
-
+   <Container>
+     <Header />
+     <ScrollView contentContainerStyle={styles.scrollContent}>
+      <TitleContainer>
+        <Title>Notificações</Title>
         {unreadCount > 0 && (
-          <Button
-            title="Marcar todas como lidas"
-            onPress={handleMarkAllAsRead}
-            containerStyle={styles.markAllButton as ViewStyle}
-            buttonStyle={styles.markAllButtonStyle}
-          />
+         <Badge
+           value={unreadCount}
+           status="error"
+           containerStyle={styles.badge}
+         />
         )}
+      </TitleContainer>
 
+      {unreadCount > 0 && (
         <Button
-          title="Voltar"
-          onPress={() => navigation.goBack()}
-          containerStyle={styles.button as ViewStyle}
-          buttonStyle={styles.buttonStyle}
+         title="Marcar todas como lidas"
+         onPress={handleMarkAllAsRead}
+         containerStyle={styles.markAllButton as ViewStyle}
+         buttonStyle={styles.markAllButtonStyle}
         />
+      )}
 
-        {loading ? (
-          <LoadingText>Carregando notificações...</LoadingText>
-        ) : notifications.length === 0 ? (
-          <EmptyContainer>
-            <EmptyText>Nenhuma notificação encontrada</EmptyText>
-          </EmptyContainer>
-        ) : (
-          notifications.map((notification) => (
-            <NotificationCard key={notification.id} isRead={notification.read}>
-              <ListItem
-                onPress={() => !notification.read && handleMarkAsRead(notification.id)}
-                onLongPress={() => handleDeleteNotification(notification.id)}
-              >
-                <NotificationIcon>{getNotificationIcon(notification.type)}</NotificationIcon>
-                <ListItem.Content>
-                  <NotificationHeader>
-                    <ListItem.Title style={styles.title}>
-                      {notification.title}
-                    </ListItem.Title>
-                    {!notification.read && <UnreadDot />}
-                  </NotificationHeader>
-                  <ListItem.Subtitle style={styles.message}>
-                    {notification.message}
-                  </ListItem.Subtitle>
-                  <DateText>{formatDate(notification.createdAt)}</DateText>
-                </ListItem.Content>
-              </ListItem>
-            </NotificationCard>
-          ))
-        )}
-      </ScrollView>
-    </Container>
+      <Button
+        title="Voltar"
+        onPress={() => navigation.goBack()}
+        containerStyle={styles.button as ViewStyle}
+        buttonStyle={styles.buttonStyle}
+      />
+
+      {loading ? (
+        <LoadingText>Carregando notificações...</LoadingText>
+      ) : notifications.length === 0 ? (
+        <EmptyContainer>
+         <EmptyText>Nenhuma notificação encontrada</EmptyText>
+        </EmptyContainer>
+      ) : (
+        notifications.map((notification) => (
+         <NotificationCard key={notification.id} isRead={notification.read}>
+           <ListItem
+            onPress={() => !notification.read && handleMarkAsRead(notification.id)}
+            onLongPress={() => handleDeleteNotification(notification.id)}
+           >
+            <NotificationIcon>{getNotificationIcon(notification.type)}</NotificationIcon>
+            <ListItem.Content>
+              <NotificationHeader>
+               <ListItem.Title style={styles.title}>
+                 {notification.title}
+               </ListItem.Title>
+               {!notification.read && <UnreadDot />}
+              </NotificationHeader>
+              <ListItem.Subtitle style={styles.message}>
+               {notification.message}
+              </ListItem.Subtitle>
+              <DateText>{formatDate(notification.createdAt)}</DateText>
+            </ListItem.Content>
+           </ListItem>
+        ))
+      )}
+     </ScrollView>
+   </Container>
   );
 };
 
+// objetos de estilo
 const styles = {
   scrollContent: {
-    padding: 20,
+   padding: 20,
   },
   badge: {
-    marginLeft: 8,
+   marginLeft: 8,
   },
   markAllButton: {
-    marginBottom: 15,
-    width: '100%',
+   marginBottom: 15,
+   width: '100%',
   },
   markAllButtonStyle: {
-    backgroundColor: theme.colors.success,
-    paddingVertical: 10,
+   backgroundColor: theme.colors.success,
+   paddingVertical: 10,
   },
   button: {
-    marginBottom: 20,
-    width: '100%',
+   marginBottom: 20,
+   width: '100%',
   },
   buttonStyle: {
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 12,
+   backgroundColor: theme.colors.primary,
+   paddingVertical: 12,
   },
   title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.colors.text,
+   fontSize: 16,
+   fontWeight: 'bold',
+   color: theme.colors.text,
   },
   message: {
-    fontSize: 14,
-    color: theme.colors.text,
-    marginTop: 4,
-    lineHeight: 20,
+   fontSize: 14,
+   color: theme.colors.text,
+   marginTop: 4,
+   lineHeight: 20,
   },
 };
 
+// componentes estilizados
 const Container = styled.View`
   flex: 1;
   background-color: ${theme.colors.background};
