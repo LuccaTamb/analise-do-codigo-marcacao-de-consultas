@@ -1,3 +1,9 @@
+# Grupo:
+
+- Lucca Sabatini Tambellini - 98169
+- Gabriel Antony Cadima Ciziks - 98215
+- Cassio Valezzi - 551059
+
 # Sistema de Agendamento de Consultas Médicas
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.76.7-blue.svg)](https://reactnative.dev/)
