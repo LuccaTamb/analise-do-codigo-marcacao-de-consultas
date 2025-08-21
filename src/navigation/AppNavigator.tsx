@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../contexts/AuthContext';
 import { RootStackParamList } from '../types/navigation';
 
-
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -16,6 +15,7 @@ import DoctorDashboardScreen from '../screens/DoctorDashboardScreen';
 import PatientDashboardScreen from '../screens/PatientDashboardScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import UserManagementScreen from '../screens/UserManagementScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -23,7 +23,7 @@ export const AppNavigator: React.FC = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return null; 
+    return null;
   }
 
   return (
@@ -34,72 +34,79 @@ export const AppNavigator: React.FC = () => {
         }}
       >
         {!user ? (
-          
+          // Rotas para usuários não autenticados
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (
-          
+          // Rotas para usuários autenticados
           <>
+            {/* Rota inicial baseada no perfil do usuário */}
             {user.role === 'admin' && (
-              <Stack.Screen 
-                name="AdminDashboard" 
+              <Stack.Screen
+                name="AdminDashboard"
                 component={AdminDashboardScreen}
                 options={{ title: 'Painel Administrativo' }}
               />
             )}
-            
+
             {user.role === 'doctor' && (
-              <Stack.Screen 
-                name="DoctorDashboard" 
+              <Stack.Screen
+                name="DoctorDashboard"
                 component={DoctorDashboardScreen}
                 options={{ title: 'Painel do Médico' }}
               />
             )}
-            
+
             {user.role === 'patient' && (
-              <Stack.Screen 
-                name="PatientDashboard" 
+              <Stack.Screen
+                name="PatientDashboard"
                 component={PatientDashboardScreen}
                 options={{ title: 'Painel do Paciente' }}
               />
             )}
 
             {/* Rotas comuns para todos os usuários autenticados */}
-            <Stack.Screen 
-              name="Home" 
+            <Stack.Screen
+              name="Home"
               component={HomeScreen}
               options={{ title: 'Início' }}
             />
-            <Stack.Screen 
-              name="CreateAppointment" 
+            <Stack.Screen
+              name="CreateAppointment"
               component={CreateAppointmentScreen}
               options={{ title: 'Agendar Consulta' }}
             />
-            <Stack.Screen 
-              name="Profile" 
+            <Stack.Screen
+              name="Profile"
               component={ProfileScreen}
               options={{ title: 'Perfil' }}
             />
-            <Stack.Screen 
-              name="EditProfile" 
+            <Stack.Screen
+              name="EditProfile"
               component={EditProfileScreen}
               options={{ title: 'Editar Perfil' }}
             />
-            <Stack.Screen 
-              name="Notifications" 
+            <Stack.Screen
+              name="Notifications"
               component={NotificationsScreen}
               options={{ title: 'Notificações' }}
             />
-            <Stack.Screen 
-              name="Settings" 
+            <Stack.Screen
+              name="Settings"
               component={SettingsScreen}
               options={{ title: 'Configurações' }}
+            />
+            {/* Adiciona a tela de Gerenciamento de Usuários */}
+            <Stack.Screen
+              name="UserManagement"
+              component={UserManagementScreen}
+              options={{ title: 'Gerenciar Usuários' }}
             />
           </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
   );
-}; 
+};
