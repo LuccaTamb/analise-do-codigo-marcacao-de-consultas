@@ -4,6 +4,7 @@ import { Modal, ViewStyle } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import theme from '../styles/theme';
 
+// Define a interface para as propriedades do componente.
 interface AppointmentActionModalProps {
   visible: boolean;
   onClose: () => void;
@@ -25,14 +26,17 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
   actionType,
   appointmentDetails,
 }) => {
+  // Estado para armazenar o motivo do cancelamento.
   const [reason, setReason] = React.useState('');
 
+  // Lida com a ação de confirmação, passando o motivo se for um cancelamento.
   const handleConfirm = () => {
     onConfirm(reason.trim() || undefined);
     setReason('');
     onClose();
   };
 
+  // Lida com o fechamento do modal, limpando o estado do motivo.
   const handleClose = () => {
     setReason('');
     onClose();
@@ -75,6 +79,7 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
               </InfoRow>
             </AppointmentInfo>
 
+            {/* Renderiza o campo de motivo apenas se a ação for de cancelamento. */}
             {isCancel && (
               <ReasonContainer>
                 <Input
@@ -90,7 +95,7 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
             )}
 
             <ConfirmationText isCancel={isCancel}>
-              {isCancel 
+              {isCancel
                 ? 'Tem certeza que deseja cancelar esta consulta?'
                 : 'Tem certeza que deseja confirmar esta consulta?'
               }
@@ -99,7 +104,7 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
 
           <ButtonContainer>
             <Button
-              title="Cancelar"
+              title="Voltar"
               onPress={handleClose}
               containerStyle={styles.cancelButton as ViewStyle}
               buttonStyle={styles.cancelButtonStyle}
@@ -120,6 +125,7 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
   );
 };
 
+// Objetos de estilo para componentes nativos.
 const styles = {
   reasonInput: {
     marginBottom: 10,
@@ -141,6 +147,7 @@ const styles = {
   },
 };
 
+// Componentes estilizados com `styled-components`.
 const Overlay = styled.View`
   flex: 1;
   background-color: rgba(0, 0, 0, 0.5);

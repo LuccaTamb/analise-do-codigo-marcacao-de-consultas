@@ -3,12 +3,14 @@ import styled from 'styled-components/native';
 import { ViewStyle, TouchableOpacity } from 'react-native';
 import theme from '../styles/theme';
 
+// Define a interface para as propriedades do componente.
 interface TimeSlotListProps {
   onSelectTime: (time: string) => void;
   selectedTime?: string;
   style?: ViewStyle;
 }
 
+// Define a interface para as propriedades dos componentes estilizados.
 interface StyledProps {
   isSelected: boolean;
 }
@@ -18,7 +20,7 @@ const TimeSlotList: React.FC<TimeSlotListProps> = ({
   selectedTime,
   style,
 }) => {
-  
+  // Gera os horários disponíveis de 9:00 às 17:30 em intervalos de 30 minutos.
   const generateTimeSlots = () => {
     const slots: string[] = [];
     for (let hour = 9; hour < 18; hour++) {
@@ -47,6 +49,7 @@ const TimeSlotList: React.FC<TimeSlotListProps> = ({
   );
 };
 
+// Componentes estilizados com `styled-components`.
 const Container = styled.View`
   margin-bottom: 15px;
 `;
@@ -55,10 +58,11 @@ const TimeGrid = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 6px;
+  gap: 6px; /* Adiciona um pequeno espaço entre os itens */
 `;
 
 const TimeCard = styled(TouchableOpacity)<StyledProps>`
+  /* Usa 23% para permitir 4 cards por linha com espaçamento. */
   width: 23%;
   padding: 8px;
   border-radius: 6px;
@@ -75,4 +79,4 @@ const TimeText = styled.Text<StyledProps>`
   color: ${(props: StyledProps) => props.isSelected ? theme.colors.primary : theme.colors.text};
 `;
 
-export default TimeSlotList; 
+export default TimeSlotList;

@@ -6,8 +6,10 @@ import NotificationBell from './NotificationBell';
 import theme from '../styles/theme';
 
 const Header: React.FC = () => {
+  // Obtém o usuário do contexto de autenticação.
   const { user } = useAuth();
 
+  // Se não houver usuário logado, não renderiza o cabeçalho.
   if (!user) return null;
 
   return (
@@ -24,17 +26,20 @@ const Header: React.FC = () => {
           <UserName>{user.name}</UserName>
         </TextContainer>
       </UserInfo>
+      {/* Renderiza o componente do sino de notificação. */}
       <NotificationBell />
     </Container>
   );
 };
 
+// Objetos de estilo para componentes nativos.
 const styles = {
   avatar: {
     backgroundColor: theme.colors.primary,
   },
 };
 
+// Componentes estilizados com `styled-components`.
 const Container = styled.View`
   background-color: ${theme.colors.primary};
   padding: 16px;

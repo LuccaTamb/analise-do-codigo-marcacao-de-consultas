@@ -3,6 +3,7 @@ import styled from 'styled-components/native';
 import { ViewStyle } from 'react-native';
 import theme from '../styles/theme';
 
+// Define a interface para as propriedades do componente.
 interface StatisticsCardProps {
   title: string;
   value: string | number;
@@ -32,10 +33,13 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
   );
 };
 
+// Componentes estilizados com `styled-components`.
 const Container = styled.View<{ color: string }>`
   background-color: ${theme.colors.white};
   border-radius: 12px;
   padding: 16px;
+  /* Garante um layout de grade com quebra de linha em telas pequenas */
+  flex-basis: 45%; 
   margin: 8px;
   min-height: 120px;
   justify-content: space-between;

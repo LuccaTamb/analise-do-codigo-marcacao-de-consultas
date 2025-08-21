@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { ViewStyle } from 'react-native';
+import { ViewStyle, TouchableOpacity } from 'react-native';
 import { Card, Text, Avatar } from 'react-native-elements';
 import theme from '../styles/theme';
 
+// Define a interface para as propriedades do componente.
 interface AppointmentCardProps {
   doctorName: string;
   date: string;
@@ -23,6 +24,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onPress,
   style,
 }) => {
+  // Retorna uma cor baseada no status da consulta.
   const getStatusColor = () => {
     switch (status) {
       case 'confirmed':
@@ -35,48 +37,51 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   };
 
   return (
-    <Card containerStyle={[styles.card, style]}>
-      <CardContent>
-        <DoctorInfo>
-          <Avatar
-            size="medium"
-            rounded
-            source={{ uri: `https:
-            containerStyle={styles.avatar}
-          />
-          <TextContainer>
-            <DoctorName>{doctorName}</DoctorName>
-            <Specialty>{specialty}</Specialty>
-          </TextContainer>
-        </DoctorInfo>
+    <CardContainer onPress={onPress} disabled={!onPress} style={style}>
+      <Card containerStyle={styles.card}>
+        <CardContent>
+          <DoctorInfo>
+            <Avatar
+              size="medium"
+              rounded
+              source={{ uri: `https://randomuser.me/api/portraits/men/4.jpg` }}
+              containerStyle={styles.avatar}
+            />
+            <TextContainer>
+              <DoctorName>{doctorName}</DoctorName>
+              <Specialty>{specialty}</Specialty>
+            </TextContainer>
+          </DoctorInfo>
 
-        <AppointmentInfo>
-          <InfoRow>
-            <InfoLabel>Data:</InfoLabel>
-            <InfoValue>{date}</InfoValue>
-          </InfoRow>
-          <InfoRow>
-            <InfoLabel>Horário:</InfoLabel>
-            <InfoValue>{time}</InfoValue>
-          </InfoRow>
-        </AppointmentInfo>
+          <AppointmentInfo>
+            <InfoRow>
+              <InfoLabel>Data:</InfoLabel>
+              <InfoValue>{date}</InfoValue>
+            </InfoRow>
+            <InfoRow>
+              <InfoLabel>Horário:</InfoLabel>
+              <InfoValue>{time}</InfoValue>
+            </InfoRow>
+          </AppointmentInfo>
 
-        <StatusContainer>
-          <StatusDot color={getStatusColor()} />
-          <StatusText color={getStatusColor()}>
-            {status === 'confirmed' ? 'Confirmada' : status === 'cancelled' ? 'Cancelada' : 'Pendente'}
-          </StatusText>
-        </StatusContainer>
-      </CardContent>
-    </Card>
+          <StatusContainer>
+            <StatusDot color={getStatusColor()} />
+            <StatusText color={getStatusColor()}>
+              {status === 'confirmed' ? 'Confirmada' : status === 'cancelled' ? 'Cancelada' : 'Pendente'}
+            </StatusText>
+          </StatusContainer>
+        </CardContent>
+      </Card>
+    </CardContainer>
   );
 };
 
+// Objeto de estilo para componentes nativos.
 const styles = {
   card: {
     borderRadius: 10,
     marginHorizontal: 0,
-    marginVertical: 8,
+    marginVertical: 0, // Removido para controlar o espaçamento no componente principal
     padding: 15,
     elevation: 3,
     shadowColor: '#000',
@@ -88,6 +93,12 @@ const styles = {
     backgroundColor: theme.colors.primary,
   },
 };
+
+// Componentes estilizados com `styled-components`.
+const CardContainer = styled(TouchableOpacity)`
+  margin-horizontal: 0;
+  margin-vertical: 8px; /* Espaçamento entre os cartões */
+`;
 
 const CardContent = styled.View`
   padding: 10px;
@@ -122,7 +133,7 @@ const AppointmentInfo = styled.View`
 const InfoRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  marginBottom: 5px;
+  margin-bottom: 5px;
 `;
 
 const InfoLabel = styled.Text`
@@ -157,4 +168,4 @@ const StatusText = styled.Text<{ color: string }>`
   font-weight: 500;
 `;
 
-export default AppointmentCard; 
+export default AppointmentCard;
