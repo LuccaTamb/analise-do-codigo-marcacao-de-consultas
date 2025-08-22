@@ -3,6 +3,8 @@
 - Lucca Sabatini Tambellini - 98169
 - Gabriel Antony Cadima Ciziks - 98215
 - Cassio Valezzi - 551059
+- Sabrina Flores V Morais - 550781
+
 
 # Sistema de Agendamento de Consultas Médicas
 
